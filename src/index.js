@@ -1,17 +1,18 @@
-const mongoose = require("mongoose");
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const connectDatabase = require("./database/database");
+const personagemRoute = require("./personagens/personagens.route");
 
-const connectDatabase = () => {
-  console.log("Conectando com o banco de dados...");
+const port = process.env.PORT || 3001;
+const app = express();
 
-  mongoose
-    .connect(process.env.DATABASE_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
-    .then(() => console.log("MongoDB Atlas conectado!"))
-    .catch((err) =>
-      console.log(`Erro ao conectar com o MongoDB, erro ${err}`)
-    );
-};
+connectDatabase();
 
-module.exports = connectDatabase;
+app.use(cors());
+
+app.use(express.json());
+
+app.use("/personagens", personagemRoute);
+
+app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
